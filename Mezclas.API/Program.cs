@@ -29,6 +29,10 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<ICatalogoArticuloRepository, CatalogoArticuloRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<ILoteRepository, LoteRepository>();
+builder.Services.AddScoped<IInventarioRepository, InventarioRepository>();
+builder.Services.AddScoped<IMedicamentoRepository, MedicamentoRepository>();
+builder.Services.AddScoped<ICatalogoRepository, CatalogoRepository>();
 
 
 builder.Services.AddIdentityCore<IdentityUser>()

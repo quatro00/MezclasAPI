@@ -15,6 +15,8 @@ public partial class Lote
 
     public DateTime FechaCaducidad { get; set; }
 
+    public decimal Piezas { get; set; }
+
     public bool Activo { get; set; }
 
     public DateTime FechaCreacion { get; set; }
@@ -26,4 +28,6 @@ public partial class Lote
     public string? UsuarioModificacion { get; set; }
 
     public virtual CatalogoArticulo Articulo { get; set; } = null!;
+
+    public virtual ICollection<MovimientoInventarioDet> MovimientoInventarioDets { get; set; } = new List<MovimientoInventarioDet>();
 }

@@ -1,4 +1,8 @@
-﻿using Mezclas.API.Repositories.Interface;
+﻿using Mezclas.API.Helpers;
+using Mezclas.API.Models;
+using Mezclas.API.Models.DTO.Inventario;
+using Mezclas.API.Models.DTO.Lote;
+using Mezclas.API.Repositories.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +16,12 @@ namespace Mezclas.API.Controllers
     public class InventarioController : ControllerBase
     {
         private readonly ICatalogoArticuloRepository catalogoArticuloRepository;
+        private readonly IInventarioRepository inventarioRepository;
 
-        public InventarioController(ICatalogoArticuloRepository catalogoArticuloRepository)
+        public InventarioController(ICatalogoArticuloRepository catalogoArticuloRepository, IInventarioRepository inventarioRepository)
         {
             this.catalogoArticuloRepository = catalogoArticuloRepository;
+            this.inventarioRepository = inventarioRepository;
         }
 
         [HttpPost("ActualizaCatalogo"), DisableRequestSizeLimit]
@@ -68,6 +74,22 @@ namespace Mezclas.API.Controllers
                 return Ok(response.result);
             }
             return Ok();
+        }
+
+        [HttpPost("MovimientoInventario")]
+        [Authorize(Roles = "Mezclas-Admin")]
+        public async Task<IActionResult> MovimientoInventario(MovimientoInventarioDto model)
+        {
+            
+            var response = await this.inventarioRepository.EntradaDeInventario(model, User.GetId());
+
+            if (!response.response)
+            {
+                ModelState.AddModelError("error", response.message);
+                return ValidationProblem(ModelState);
+            }
+            
+            return Ok(response.result);
         }
     }
 }

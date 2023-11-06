@@ -22,7 +22,21 @@ public partial class MezclasOncologicasDbContext : DbContext
 
     public virtual DbSet<Cuentum> Cuenta { get; set; }
 
+    public virtual DbSet<EstatusMovimientoInventario> EstatusMovimientoInventarios { get; set; }
+
     public virtual DbSet<Lote> Lotes { get; set; }
+
+    public virtual DbSet<Medicamento> Medicamentos { get; set; }
+
+    public virtual DbSet<MovimientoInventario> MovimientoInventarios { get; set; }
+
+    public virtual DbSet<MovimientoInventarioDet> MovimientoInventarioDets { get; set; }
+
+    public virtual DbSet<TipoMedicamento> TipoMedicamentos { get; set; }
+
+    public virtual DbSet<TipoMovimientoInventario> TipoMovimientoInventarios { get; set; }
+
+    public virtual DbSet<UnidadMedidum> UnidadMedida { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -96,6 +110,14 @@ public partial class MezclasOncologicasDbContext : DbContext
                 .HasConstraintName("FK_Cuenta_CuentaRol");
         });
 
+        modelBuilder.Entity<EstatusMovimientoInventario>(entity =>
+        {
+            entity.ToTable("EstatusMovimientoInventario");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Descripcion).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Lote>(entity =>
         {
             entity.ToTable("Lote");
@@ -106,6 +128,7 @@ public partial class MezclasOncologicasDbContext : DbContext
             entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
             entity.Property(e => e.FechaModificacion).HasColumnType("datetime");
             entity.Property(e => e.NumLote).HasMaxLength(50);
+            entity.Property(e => e.Piezas).HasColumnType("numeric(18, 2)");
             entity.Property(e => e.UsuarioCreacion).HasMaxLength(50);
             entity.Property(e => e.UsuarioModificacion).HasMaxLength(50);
 
@@ -113,6 +136,96 @@ public partial class MezclasOncologicasDbContext : DbContext
                 .HasForeignKey(d => d.ArticuloId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Lote_CatalogoArticulos");
+        });
+
+        modelBuilder.Entity<Medicamento>(entity =>
+        {
+            entity.ToTable("Medicamento");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaModificacion).HasColumnType("datetime");
+            entity.Property(e => e.Nombre).HasMaxLength(500);
+            entity.Property(e => e.UsuarioCreacion).HasMaxLength(50);
+            entity.Property(e => e.UsuarioModificacion).HasMaxLength(50);
+
+            entity.HasOne(d => d.TipoMedicamento).WithMany(p => p.Medicamentos)
+                .HasForeignKey(d => d.TipoMedicamentoId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Medicamento_TipoMedicamento");
+
+            entity.HasOne(d => d.UnidadMedida).WithMany(p => p.Medicamentos)
+                .HasForeignKey(d => d.UnidadMedidaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Medicamento_UnidadMedida");
+        });
+
+        modelBuilder.Entity<MovimientoInventario>(entity =>
+        {
+            entity.ToTable("MovimientoInventario");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Fecha).HasColumnType("datetime");
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaModificacion).HasColumnType("datetime");
+            entity.Property(e => e.Referencia).HasMaxLength(50);
+            entity.Property(e => e.UsuarioCreacion).HasMaxLength(50);
+            entity.Property(e => e.UsuarioModificacionId).HasMaxLength(50);
+
+            entity.HasOne(d => d.EstatusMovimientoInventario).WithMany(p => p.MovimientoInventarios)
+                .HasForeignKey(d => d.EstatusMovimientoInventarioId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MovimientoInventario_EstatusMovimientoInventario");
+
+            entity.HasOne(d => d.TipoMovimientoInventario).WithMany(p => p.MovimientoInventarios)
+                .HasForeignKey(d => d.TipoMovimientoInventarioId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MovimientoInventario_TipoMovimientoInventario");
+        });
+
+        modelBuilder.Entity<MovimientoInventarioDet>(entity =>
+        {
+            entity.ToTable("MovimientoInventarioDet");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Cantidad).HasColumnType("numeric(18, 2)");
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaModificacion).HasColumnType("datetime");
+            entity.Property(e => e.UsuarioCreacion).HasMaxLength(50);
+            entity.Property(e => e.UsuarioModificacion).HasMaxLength(50);
+
+            entity.HasOne(d => d.Lote).WithMany(p => p.MovimientoInventarioDets)
+                .HasForeignKey(d => d.LoteId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MovimientoInventarioDet_Lote");
+
+            entity.HasOne(d => d.MovimientoInventario).WithMany(p => p.MovimientoInventarioDets)
+                .HasForeignKey(d => d.MovimientoInventarioId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MovimientoInventarioDet_MovimientoInventario");
+        });
+
+        modelBuilder.Entity<TipoMedicamento>(entity =>
+        {
+            entity.ToTable("TipoMedicamento");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Descripcion).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<TipoMovimientoInventario>(entity =>
+        {
+            entity.ToTable("TipoMovimientoInventario");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Descripcion).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<UnidadMedidum>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Descripcion).HasMaxLength(50);
+            entity.Property(e => e.DescripcionCorta).HasMaxLength(50);
         });
 
         OnModelCreatingPartial(modelBuilder);
