@@ -15,6 +15,8 @@ public partial class MovimientoInventarioDet
 
     public decimal Cantidad { get; set; }
 
+    public bool MovimientoAplicado { get; set; }
+
     public bool Activo { get; set; }
 
     public DateTime FechaCreacion { get; set; }

@@ -33,7 +33,10 @@ builder.Services.AddScoped<ILoteRepository, LoteRepository>();
 builder.Services.AddScoped<IInventarioRepository, InventarioRepository>();
 builder.Services.AddScoped<IMedicamentoRepository, MedicamentoRepository>();
 builder.Services.AddScoped<ICatalogoRepository, CatalogoRepository>();
-
+builder.Services.AddScoped<ISucursalRepository, SucursalRepository>();
+builder.Services.AddScoped<ISucursalHorarioRepository, SucursalHorarioRepository>();
+builder.Services.AddScoped<IEquivalenciaArticuloMedicamentoRepository, EquivalenciaArticuloMedicamentoRepository>();
+builder.Services.AddScoped<ICuentaRepository, CuentaRepository>();
 
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()

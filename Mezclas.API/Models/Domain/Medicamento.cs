@@ -23,6 +23,8 @@ public partial class Medicamento
 
     public string? UsuarioModificacion { get; set; }
 
+    public virtual ICollection<EquivalenciaArticuloMedicamento> EquivalenciaArticuloMedicamentos { get; set; } = new List<EquivalenciaArticuloMedicamento>();
+
     public virtual TipoMedicamento TipoMedicamento { get; set; } = null!;
 
     public virtual UnidadMedidum UnidadMedida { get; set; } = null!;

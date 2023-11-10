@@ -35,5 +35,7 @@ public partial class CatalogoArticulo
 
     public string PartidaPresupuestal { get; set; } = null!;
 
+    public virtual ICollection<EquivalenciaArticuloMedicamento> EquivalenciaArticuloMedicamentos { get; set; } = new List<EquivalenciaArticuloMedicamento>();
+
     public virtual ICollection<Lote> Lotes { get; set; } = new List<Lote>();
 }

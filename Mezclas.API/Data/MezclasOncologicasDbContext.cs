@@ -22,6 +22,8 @@ public partial class MezclasOncologicasDbContext : DbContext
 
     public virtual DbSet<Cuentum> Cuenta { get; set; }
 
+    public virtual DbSet<EquivalenciaArticuloMedicamento> EquivalenciaArticuloMedicamentos { get; set; }
+
     public virtual DbSet<EstatusMovimientoInventario> EstatusMovimientoInventarios { get; set; }
 
     public virtual DbSet<Lote> Lotes { get; set; }
@@ -31,6 +33,12 @@ public partial class MezclasOncologicasDbContext : DbContext
     public virtual DbSet<MovimientoInventario> MovimientoInventarios { get; set; }
 
     public virtual DbSet<MovimientoInventarioDet> MovimientoInventarioDets { get; set; }
+
+    public virtual DbSet<Sucursal> Sucursals { get; set; }
+
+    public virtual DbSet<SucursalCuentum> SucursalCuenta { get; set; }
+
+    public virtual DbSet<SucursalHorario> SucursalHorarios { get; set; }
 
     public virtual DbSet<TipoMedicamento> TipoMedicamentos { get; set; }
 
@@ -108,6 +116,30 @@ public partial class MezclasOncologicasDbContext : DbContext
                 .HasForeignKey(d => d.RolId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Cuenta_CuentaRol");
+        });
+
+        modelBuilder.Entity<EquivalenciaArticuloMedicamento>(entity =>
+        {
+            entity.HasKey(e => new { e.ArticuloId, e.MedicamentoId });
+
+            entity.ToTable("EquivalenciaArticuloMedicamento");
+
+            entity.Property(e => e.CantidadPiezasUnitarias).HasColumnType("numeric(18, 2)");
+            entity.Property(e => e.ContenidoPorPieza).HasColumnType("numeric(18, 2)");
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaModificacion).HasColumnType("datetime");
+            entity.Property(e => e.UsuarioCreacion).HasMaxLength(50);
+            entity.Property(e => e.UsuarioModificacion).HasMaxLength(50);
+
+            entity.HasOne(d => d.Articulo).WithMany(p => p.EquivalenciaArticuloMedicamentos)
+                .HasForeignKey(d => d.ArticuloId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EquivalenciaArticuloMedicamento_CatalogoArticulos");
+
+            entity.HasOne(d => d.Medicamento).WithMany(p => p.EquivalenciaArticuloMedicamentos)
+                .HasForeignKey(d => d.MedicamentoId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EquivalenciaArticuloMedicamento_Medicamento");
         });
 
         modelBuilder.Entity<EstatusMovimientoInventario>(entity =>
@@ -203,6 +235,56 @@ public partial class MezclasOncologicasDbContext : DbContext
                 .HasForeignKey(d => d.MovimientoInventarioId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MovimientoInventarioDet_MovimientoInventario");
+        });
+
+        modelBuilder.Entity<Sucursal>(entity =>
+        {
+            entity.ToTable("Sucursal");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Contacto).HasMaxLength(500);
+            entity.Property(e => e.CorreoElectronico).HasMaxLength(500);
+            entity.Property(e => e.Direccion).HasMaxLength(500);
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaModificacion).HasColumnType("datetime");
+            entity.Property(e => e.Nombre).HasMaxLength(500);
+            entity.Property(e => e.Telefono).HasMaxLength(500);
+            entity.Property(e => e.Telefono2).HasMaxLength(500);
+            entity.Property(e => e.UsuarioCreacion).HasMaxLength(50);
+            entity.Property(e => e.UsuarioModificacion).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<SucursalCuentum>(entity =>
+        {
+            entity.HasKey(e => new { e.SucursalId, e.CuentaId });
+
+            entity.HasOne(d => d.Cuenta).WithMany(p => p.SucursalCuenta)
+                .HasForeignKey(d => d.CuentaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SucursalCuenta_Cuenta");
+
+            entity.HasOne(d => d.Sucursal).WithMany(p => p.SucursalCuenta)
+                .HasForeignKey(d => d.SucursalId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SucursalCuenta_Sucursal");
+        });
+
+        modelBuilder.Entity<SucursalHorario>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_Horario");
+
+            entity.ToTable("SucursalHorario");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaModificacion).HasColumnType("datetime");
+            entity.Property(e => e.UsuarioCreacion).HasMaxLength(50);
+            entity.Property(e => e.UsuarioModificacion).HasMaxLength(50);
+
+            entity.HasOne(d => d.Sucursal).WithMany(p => p.SucursalHorarios)
+                .HasForeignKey(d => d.SucursalId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SucursalHorario_Sucursal");
         });
 
         modelBuilder.Entity<TipoMedicamento>(entity =>

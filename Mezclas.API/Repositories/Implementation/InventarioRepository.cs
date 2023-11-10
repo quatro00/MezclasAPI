@@ -20,6 +20,10 @@ namespace Mezclas.API.Repositories.Implementation
             ResponseModel rm = new ResponseModel();
             try
             {
+                if(mezclasOncologicasDbContext.MovimientoInventarios.Where(x=>x.Referencia == model.Referencia).Count() > 0)
+                {
+
+                }
                 //colocamos los datos del movimiento
                 MovimientoInventario movimientoInventario = new MovimientoInventario() {
                     Id = Guid.NewGuid(),
@@ -45,6 +49,7 @@ namespace Mezclas.API.Repositories.Implementation
                         Folio = x,
                         LoteId = item.LoteId,
                         Cantidad = item.Cantidad,
+                        MovimientoAplicado = false,
                         Activo = true,
                         FechaCreacion = DateTime.Now,
                         UsuarioCreacion = usuarioId,
