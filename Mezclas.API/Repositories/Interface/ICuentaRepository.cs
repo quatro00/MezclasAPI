@@ -7,5 +7,7 @@ namespace Mezclas.API.Repositories.Interface
     {
         Task<ResponseModel> GetAll();
         Task<ResponseModel> AsociarCuentaSucursal(SucursalCuentaDto model);
+        Task<ResponseModel> BorrarCuentaSucursal(SucursalCuentaDto model);
+        Task<ResponseModel> GetCuentasBySucursal(Guid sucursalId);
     }
 }

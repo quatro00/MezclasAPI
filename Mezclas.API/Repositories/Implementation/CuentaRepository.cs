@@ -45,6 +45,24 @@ namespace Mezclas.API.Repositories.Implementation
             return rm;
         }
 
+        public async Task<ResponseModel> BorrarCuentaSucursal(SucursalCuentaDto model)
+        {
+            ResponseModel rm = new ResponseModel();
+            try
+            {
+                var result = await mezclasOncologicasDbContext.SucursalCuenta.Where(x => x.SucursalId == model.sucursalId && x.CuentaId == model.cuentaId).ExecuteDeleteAsync();
+                  
+                rm.result = result;
+                rm.SetResponse(true, "Datos guardados con éxito.");
+
+            }
+            catch (Exception ex)
+            {
+                rm.SetResponse(false, "Ocurrio un error inesperado.");
+            }
+            return rm;
+        }
+
         public async Task<ResponseModel> GetAll()
         {
             ResponseModel rm = new ResponseModel();
@@ -60,6 +78,36 @@ namespace Mezclas.API.Repositories.Implementation
                     RolId = x.RolId,
                     Rol = x.Rol.Descripcion,
                     Activo = x.Activo
+                }).ToListAsync();
+
+                rm.result = medicamentos;
+                rm.SetResponse(true, "Datos guardados con éxito.");
+
+            }
+            catch (Exception ex)
+            {
+                rm.SetResponse(false, "Ocurrio un error inesperado.");
+            }
+            return rm;
+        }
+
+        public async Task<ResponseModel> GetCuentasBySucursal(Guid sucursalId)
+        {
+            ResponseModel rm = new ResponseModel();
+            try
+            {
+                var medicamentos = await mezclasOncologicasDbContext.Cuenta
+                    .Where(x=>x.SucursalCuenta.Any(x=>x.SucursalId == sucursalId)).Select(x => new CuentaDto()
+                {
+                    Id = x.Id,
+                    Nombre = x.Nombre,
+                    Matricula = x.Matricula,
+                    Apellidos = x.Apellidos,
+                    CorreoElectronico = x.CorreoElectronico,
+                    RolId = x.RolId,
+                    Rol = x.Rol.Descripcion,
+                    Activo = x.Activo
+
                 }).ToListAsync();
 
                 rm.result = medicamentos;

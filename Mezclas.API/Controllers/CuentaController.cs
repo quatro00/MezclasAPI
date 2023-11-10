@@ -35,12 +35,44 @@ namespace Mezclas.API.Controllers
             return Ok(response.result);
         }
 
+        [HttpGet("GetCuentasBySucursal/{id:Guid}")]
+        [Authorize(Roles = "Mezclas-Admin")]
+        public async Task<IActionResult> GetCuentasBySucursal([FromRoute] Guid id)
+        {
+
+            var response = await this.cuentaRepository.GetCuentasBySucursal(id);
+
+            if (!response.response)
+            {
+                ModelState.AddModelError("error", response.message);
+                return ValidationProblem(ModelState);
+            }
+
+            return Ok(response.result);
+        }
+
         [HttpPost("AsociarSucursalCuenta")]
         [Authorize(Roles = "Mezclas-Admin")]
         public async Task<IActionResult> AsociarSucursalCuenta(SucursalCuentaDto model)
         {
 
             var response = await this.cuentaRepository.AsociarCuentaSucursal(model);
+
+            if (!response.response)
+            {
+                ModelState.AddModelError("error", response.message);
+                return ValidationProblem(ModelState);
+            }
+
+            return Ok(response.result);
+        }
+
+        [HttpPost("BorrarCuentaSucursal")]
+        [Authorize(Roles = "Mezclas-Admin")]
+        public async Task<IActionResult> BorrarCuentaSucursal(SucursalCuentaDto model)
+        {
+
+            var response = await this.cuentaRepository.BorrarCuentaSucursal(model);
 
             if (!response.response)
             {
